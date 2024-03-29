@@ -1,4 +1,4 @@
 = Assignment Linguaggi e Compilatori
 
 In questo repository sono contenuti tutti gli assignment del corso di Linguaggi e Compilatori dell'univeristà 
-link:unimore.it[Unimore] svolti da link:github.com/LinkIT3[Matteo Carriera] e link:github.com/CodKyrat47[Andrea Siena] nell'A.A. 2023-2024.
+link:https://unimore.it[Unimore] svolti da link:https://github.com/LinkIT3[Matteo Carriera] e link:https://github.com/CodKyrat47[Andrea Siena] nell'A.A. 2023-2024.
