@@ -1,0 +1,41 @@
+= Primo Assignment di Linguaggi e Compilatori
+
+link:PrimoAssignment.pdf[Traccia]
+
+== link:LocalOpts.h[]
+
+Header file relativo al passo local-opts.
+
+== link:LocalOpts.cpp[]
+
+File sorgente relativo al passo local-opts. +
+Di seguito sono riportati i tre passi LLVM per la realizzazione delle relative ottimizzazioni locali.
+
+=== Algebraic Identify
+
+`x + 0 = 0 + x ⇒x` +
+`x * 1 = 1 * x ⇒x`
+
+=== Strength Reduction
+
+`15 * x = x * 15 ⇒ (x << 4) - x` +
+`y = x / 8 ⇒ y = x >> 3`
+
+
+=== Multi-Instruction Optimization
+
+`a = b +1, c = a -1, c = b`
+
+== link:CMakeLists.txt[]
+
+Inserimento del file sorgente `+LocalOpts.cpp+` nel CMake.
+
+== link:PassRegistry.def[]
+
+Aggiunta del passo nel pass manager nella sezione relativa ai moduli:
+`+MODULE_PASS("local-opts", LocalOpts())+`.
+
+== link:PassBuilder.cpp[]
+
+Include dell'header file nel pass manager:
+`+#include "llvm/Transforms/Utils/LocalOpts.h"+`.
