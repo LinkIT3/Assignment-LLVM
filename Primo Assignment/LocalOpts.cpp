@@ -21,8 +21,7 @@ const std::map<Instruction::BinaryOps, Instruction::BinaryOps> inverseOperations
 
 //Addition 
 
-bool addBy0(BasicBlock::iterator Iter) 
-{
+bool addBy0(BasicBlock::iterator Iter) {
   BinaryOperator *binIter = dyn_cast<BinaryOperator>(Iter);
   if (not binIter) return false;
   
@@ -103,8 +102,7 @@ bool mulToShift (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
 }
 
 
-bool mulBy1(BinaryOperator *binIter, Value *Other) 
-{
+bool mulBy1(BinaryOperator *binIter, Value *Other) {
 
   binIter -> replaceAllUsesWith(Other);
   return true;
