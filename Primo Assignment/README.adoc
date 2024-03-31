@@ -94,11 +94,16 @@ bool zeroDiv(BinaryOperator *binIter, ConstantInt *ci)
 In caso di divisione unsigned che abbia 0 come numeratore sostituisce le sue references con la costante 0.
 
 link:LocalOpts.cpp#L112[mulOptimization]
-link:LocalOpts.cpp#L164[divOptimization]
 
 [source,c++]
 ----
 bool mulOptimization(BasicBlock::iterator Iter)
+----
+
+link:LocalOpts.cpp#L164[divOptimization]
+
+[source,c++]
+----
 bool divOptimization (BasicBlock::iterator Iter)
 ----
 
