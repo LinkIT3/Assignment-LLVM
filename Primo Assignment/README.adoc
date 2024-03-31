@@ -24,7 +24,7 @@ Di seguito sono riportati i tre passi LLVM per la realizzazione delle relative o
 
 link:LocalOpts.cpp#24[lines=24] riga 24
 
-[source,c++,linenums]
+[source,c++]
 
 ----
 bool addBy0(BasicBlock::iterator Iter) 
