@@ -21,7 +21,9 @@ x * 1 = 1 * x ⇒ x
 
 ==== Funzioni coinvolte
 
-link:LocalOpts.cpp#L24[addBy0]
+[[nested]]
+
+*link:LocalOpts.cpp#L24[addBy0]
 
 [source,c++]
 ----
@@ -30,7 +32,7 @@ bool addBy0(BasicBlock::iterator Iter)
 
 Verifica che l'istruzione sia un'addizione e che uno degli operandi sia una costante, più precisamente che sia uno 0, dopodichè sostituisce le references all'addizione con l'operando stesso.
 
-link:LocalOpts.cpp#L105[mulBy1]
+*link:LocalOpts.cpp#L105[mulBy1]
 
 [source,c++]
 ----
