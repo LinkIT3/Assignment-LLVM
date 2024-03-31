@@ -23,11 +23,11 @@ Di seguito sono riportati i tre passi LLVM per la realizzazione delle relative o
 
 //[source,groovy,linenums]
 
-----
+//----
 
 include::LocalOpts.cpp[lines=24]
 
-----
+//----
 
 Verifica che uno degli operandi sia una costante, più precisamente che sia uno 0, dopodichè sostituisce le references dell'istruzione con l'operando stesso
 
