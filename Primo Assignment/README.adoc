@@ -21,7 +21,7 @@ Di seguito sono riportati i tre passi LLVM per la realizzazione delle relative o
 
 :pygments-linenums-mode: table 
 
-[source,groovy,linenums]
+//[source,groovy,linenums]
 
 ----
 
@@ -33,11 +33,11 @@ Verifica che uno degli operandi sia una costante, più precisamente che sia uno 
 
 [source,groovy,linenums]
 
-----
+//----
 
 include::LocalOpts.cpp[lines=106]
 
-----
+//----
 
 Verifica che uno degli operandi sia una costante, più precisamente che sia un 1, dopodichè sostituisce le references dell'istruzione con l'operando stesso
 
