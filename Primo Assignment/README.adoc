@@ -21,7 +21,7 @@ x * 1 = 1 * x ⇒ x
 
 ==== Funzioni coinvolte
 
-link:LocalOpts.cpp#24[addBy0]
+link:LocalOpts.cpp#L24[addBy0]
 
 [source,c++]
 ----
@@ -30,7 +30,7 @@ bool addBy0(BasicBlock::iterator Iter)
 
 Verifica che l'istruzione sia un'addizione e che uno degli operandi sia una costante, più precisamente che sia uno 0, dopodichè sostituisce le references all'addizione con l'operando stesso.
 
-link:LocalOpts.cpp#105[mulBy1]
+link:LocalOpts.cpp#L105[mulBy1]
 
 [source,c++]
 ----
@@ -48,7 +48,7 @@ y = x / 8 ⇒ y = x >> 3
 
 ==== Funzioni coinvolte
 
-link:LocalOpts.cpp#62[mulByPowOf2]
+link:LocalOpts.cpp#L62[mulByPowOf2]
 
 [source,c++]
 ----
@@ -57,7 +57,7 @@ bool mulByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
 
 Dopo aver controllato che l'istruzione sia una moltiplicazione e che uno degli operandi sia, allo stesso tempo, una costante ed una potenza di due, crea un'istruzione di shift a sinistra. Quest'ultima avrà come operandi il registro presente nella moltiplicazione ed il logaritmo in base due della costante. Dopodichè vengono aggiornate le references alla moltiplicazione con lo shift.
 
-link:LocalOpts.cpp#72[mulToShift]
+link:LocalOpts.cpp#L72[mulToShift]
 
 [source,c++]
 ----
@@ -66,7 +66,7 @@ bool mulToShift (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
 
 Ha la stessa funzionalità di mulByPowOf2 ma lavora con costanti che non siano potenze di due. Crea due istruzioni: uno shift a sinistra e, un'addizione o una sottrazione. Questa decisione dipende dalla differenza tra il valore contenuto nel registro ed il valore del logaritmo in base due più vicino alla costante. Le references alla moltiplicazione vengono passate all'ultima istruzione creata.
 
-link:LocalOpts.cpp#139[divByPowOf2]
+link:LocalOpts.cpp#L139[divByPowOf2]
 
 [source,c++]
 ----
@@ -75,7 +75,7 @@ bool divByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
 
 Meccanismo identico a mulByPowOf2 ma applicato alla divisione unsigned. In questo caso l'istruzione creata è uno shift a destra.
 
-link:LocalOpts.cpp#149[divBy1]
+link:LocalOpts.cpp#L149[divBy1]
 
 [source,c++]
 ----
@@ -84,7 +84,7 @@ bool divBy1(BinaryOperator *binIter, Value *Other)
 
 Come mulBy1, ma per la divisione unsigned.
 
-link:LocalOpts.cpp#156[zeroDiv]
+link:LocalOpts.cpp#L156[zeroDiv]
 
 [source,c++]
 ----
@@ -93,8 +93,8 @@ bool zeroDiv(BinaryOperator *binIter, ConstantInt *ci)
 
 In caso di divisione unsigned che abbia 0 come numeratore sostituisce le sue references con la costante 0.
 
-link:LocalOpts.cpp#112[mulOptimization]
-link:LocalOpts.cpp#164[divOptimization]
+link:LocalOpts.cpp#L112[mulOptimization]
+link:LocalOpts.cpp#L164[divOptimization]
 
 [source,c++]
 ----
@@ -112,7 +112,7 @@ a = b + 1, c = a - 1, c = b
 
 ==== Funzioni coinvolte
 
-link:LocalOpts.cpp#195[multiInstructionOptimization]
+link:LocalOpts.cpp#L195[multiInstructionOptimization]
 
 [source,c++]
 ----
