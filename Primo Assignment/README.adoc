@@ -11,31 +11,68 @@ Header file relativo al passo local-opts.
 File sorgente relativo al passo local-opts. +
 Di seguito sono riportati i tre passi LLVM per la realizzazione delle relative ottimizzazioni locali.
 
-=== Algebraic Identify
+=== Algebraic Identity
 
 `x + 0 = 0 + x ⇒x` +
 `x * 1 = 1 * x ⇒x`
+
+==== Funzioni coinvolte:
+
+
+:pygments-linenums-mode: table 
+
+[source,groovy,linenums]
+
+----
+
+include::LocalOpts.cpp[lines=24]
+
+----
+
+Verifica che uno degli operandi sia una costante, più precisamente che sia uno 0, dopodichè sostituisce le references dell'istruzione con l'operando stesso
+
+[source,groovy,linenums]
+
+----
+
+include::LocalOpts.cpp[lines=106]
+
+----
+
+Verifica che uno degli operandi sia una costante, più precisamente che sia un 1, dopodichè sostituisce le references dell'istruzione con l'operando stesso
 
 === Strength Reduction
 
 `15 * x = x * 15 ⇒ (x << 4) - x` +
 `y = x / 8 ⇒ y = x >> 3`
 
+mulByPowOf2 mulToShift divByPowOf2 divBy1 zeroDiv
+mulOptimization divOptimization 
+
 
 === Multi-Instruction Optimization
 
 `a = b +1, c = a -1, c = b`
 
+multiInstructionOptimization
+
 == link:CMakeLists.txt[]
 
-Inserimento del file sorgente `+LocalOpts.cpp+` nel CMake.
+Inserimento del file sorgente `LocalOpts.cpp` nel CMake.
 
 == link:PassRegistry.def[]
 
 Aggiunta del passo nel pass manager nella sezione relativa ai moduli:
-`+MODULE_PASS("local-opts", LocalOpts())+`.
+`MODULE_PASS("local-opts", LocalOpts())`.
 
 == link:PassBuilder.cpp[]
 
 Include dell'header file nel pass manager:
-`+#include "llvm/Transforms/Utils/LocalOpts.h"+`.
+`#include "llvm/Transforms/Utils/LocalOpts.h"`. +
+
+== Esecuzione del codice
+
+Una volta inseriti i file nella propria cartella di lavoro, eseguire i seguenti comandi per l'ottimizzazione +
+ROOT/BUILD -> `make opt && make install` +
+ROOT/TEST -> `opt -p local-opts fileDaOttimizzare.ll -o fileOttimizzato.bc` e +
+`llvm-dis fileOttimizzato.bc -o fileOttimizzato.ll`

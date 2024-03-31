@@ -21,7 +21,8 @@ const std::map<Instruction::BinaryOps, Instruction::BinaryOps> inverseOperations
 
 //Addition 
 
-bool addBy0(BasicBlock::iterator Iter) {
+bool addBy0(BasicBlock::iterator Iter) 
+{
   BinaryOperator *binIter = dyn_cast<BinaryOperator>(Iter);
   if (not binIter) return false;
   
@@ -59,7 +60,8 @@ X<<nearest
 */
 
 
-bool mulByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other) {
+bool mulByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
+{
   Constant *val = ConstantInt::get(ci -> getType(), ci -> getValue().exactLogBase2());
   Instruction *NewInst = BinaryOperator::Create(Instruction::Shl, Other, val);
   NewInst -> insertAfter(binIter);
@@ -68,7 +70,8 @@ bool mulByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other) {
 }
 
 
-bool mulToShift (BinaryOperator *binIter, ConstantInt *ci, Value *Other) {
+bool mulToShift (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
+{
   unsigned near = ci -> getValue().nearestLogBase2();
   APInt diff = (ci -> getValue()) - (1 << near);
   unsigned log = diff.logBase2();
@@ -100,13 +103,16 @@ bool mulToShift (BinaryOperator *binIter, ConstantInt *ci, Value *Other) {
 }
 
 
-bool mulBy1(BinaryOperator *binIter, Value *Other) {
+bool mulBy1(BinaryOperator *binIter, Value *Other) 
+{
+
   binIter -> replaceAllUsesWith(Other);
   return true;
 }
 
 
-bool mulOptimization(BasicBlock::iterator Iter){
+bool mulOptimization(BasicBlock::iterator Iter)
+{
   BinaryOperator *binIter = dyn_cast<BinaryOperator>(Iter);
   if (not binIter) return false;
 
@@ -132,7 +138,8 @@ bool mulOptimization(BasicBlock::iterator Iter){
 
 // Division
 
-bool divByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other) {
+bool divByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
+{
   Constant *val = ConstantInt::get(ci -> getType(), ci -> getValue().exactLogBase2());
   Instruction *NewInst = BinaryOperator::Create(Instruction::LShr, Other, val);
   NewInst -> insertAfter(binIter);
@@ -141,20 +148,23 @@ bool divByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other) {
 }
 
 
-bool divBy1(BinaryOperator *binIter, Value *Other) {
+bool divBy1(BinaryOperator *binIter, Value *Other)
+{
   binIter -> replaceAllUsesWith(Other);
   return true;
 }
 
 
-bool zeroDiv(BinaryOperator *binIter, ConstantInt *ci){
+bool zeroDiv(BinaryOperator *binIter, ConstantInt *ci)
+{
   unsigned zero = 0;
   binIter -> replaceAllUsesWith(ConstantInt::get(ci -> getType(), zero));
   return true;
 }
 
 
-bool divOptimization (BasicBlock::iterator Iter) {
+bool divOptimization (BasicBlock::iterator Iter)
+{
   BinaryOperator *binIter = dyn_cast<BinaryOperator>(Iter);
   if (not binIter) return false;
 
@@ -184,7 +194,8 @@ bool divOptimization (BasicBlock::iterator Iter) {
 
 // Multi Instruction Optimizzation
 
-bool multiInstructionOptimization(BasicBlock::iterator Iter, BasicBlock &B){
+bool multiInstructionOptimization(BasicBlock::iterator Iter, BasicBlock &B)
+{
   BinaryOperator *binIter = dyn_cast<BinaryOperator>(Iter);
   if (not binIter) return false;
 
@@ -226,7 +237,8 @@ bool multiInstructionOptimization(BasicBlock::iterator Iter, BasicBlock &B){
 }
 
 
-bool runOnBasicBlock(BasicBlock &B) {
+bool runOnBasicBlock(BasicBlock &B)
+{
   bool modified = false;
 
   for (BasicBlock::iterator Iter = B.begin(); Iter != B.end(); ++Iter) {
@@ -263,7 +275,8 @@ bool runOnBasicBlock(BasicBlock &B) {
 }
 
 
-bool runOnFunction(Function &F) {
+bool runOnFunction(Function &F)
+{
   bool Transformed = false;
 
   for (Function::iterator Iter = F.begin(); Iter != F.end(); ++Iter) {
@@ -276,7 +289,8 @@ bool runOnFunction(Function &F) {
 }
 
 
-PreservedAnalyses LocalOpts::run(Module &M, ModuleAnalysisManager &AM) {
+PreservedAnalyses LocalOpts::run(Module &M, ModuleAnalysisManager &AM)
+{
   for (Module::iterator Fiter = M.begin(); Fiter != M.end(); ++Fiter)
     if (runOnFunction(*Fiter))
       return PreservedAnalyses::none();
