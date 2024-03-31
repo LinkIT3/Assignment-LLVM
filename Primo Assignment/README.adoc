@@ -21,25 +21,26 @@ Di seguito sono riportati i tre passi LLVM per la realizzazione delle relative o
 
 :pygments-linenums-mode: table 
 
-//[source,groovy,linenums]
 
-//----
+link:LocalOpts.cpp[lines=24] riga 24
 
-include::LocalOpts.cpp[lines=24]
+[source,c++,linenums]
 
-//----
+----
+bool addBy0(BasicBlock::iterator Iter) 
+----
 
-Verifica che uno degli operandi sia una costante, più precisamente che sia uno 0, dopodichè sostituisce le references dell'istruzione con l'operando stesso
+Verifica che l'istruzione sia un'addizione e che uno degli operandi sia una costante, più precisamente che sia uno 0, dopodichè sostituisce le references all'addizione con l'operando stesso.
 
-[source,groovy,linenums]
+link:LocalOpts.cpp[lines=105]  riga 105
 
-//----
+[source,c++,linenums]
 
-include::LocalOpts.cpp[lines=106]
+----
+bool mulBy1(BinaryOperator *binIter, Value *Other)
+----
 
-//----
-
-Verifica che uno degli operandi sia una costante, più precisamente che sia un 1, dopodichè sostituisce le references dell'istruzione con l'operando stesso
+Verifica che l'istruzione di moltiplicazione abbia una costante tra gli operandi, più precisamente che sia un 1, dopodichè sostituisce le references alla moltiplicazione con l'operando stesso.
 
 === Strength Reduction
 
