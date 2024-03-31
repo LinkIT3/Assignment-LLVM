@@ -9,33 +9,30 @@ Header file relativo al passo local-opts.
 == link:LocalOpts.cpp[]
 
 File sorgente relativo al passo local-opts. +
+
 Di seguito sono riportati i tre passi LLVM per la realizzazione delle relative ottimizzazioni locali.
 
 === Algebraic Identity
 
-`x + 0 = 0 + x ⇒x` +
-`x * 1 = 1 * x ⇒x`
+```
+x + 0 = 0 + x ⇒ x
+x * 1 = 1 * x ⇒ x
+```
 
-==== Funzioni coinvolte:
+==== Funzioni coinvolte
 
-
-:pygments-linenums-mode: table 
-
-
-link:LocalOpts.cpp#24[lines=24] riga 24
+link:LocalOpts.cpp#24[addBy0]
 
 [source,c++]
-
 ----
 bool addBy0(BasicBlock::iterator Iter) 
 ----
 
 Verifica che l'istruzione sia un'addizione e che uno degli operandi sia una costante, più precisamente che sia uno 0, dopodichè sostituisce le references all'addizione con l'operando stesso.
 
-link:LocalOpts.cpp[lines=105]  riga 105
+link:LocalOpts.cpp#105[mulBy1]
 
-[source,c++,linenums]
-
+[source,c++]
 ----
 bool mulBy1(BinaryOperator *binIter, Value *Other)
 ----
@@ -44,36 +41,118 @@ Verifica che l'istruzione di moltiplicazione abbia una costante tra gli operandi
 
 === Strength Reduction
 
-`15 * x = x * 15 ⇒ (x << 4) - x` +
-`y = x / 8 ⇒ y = x >> 3`
+```
+15 * x = x * 15 ⇒ (x << 4) - x
+y = x / 8 ⇒ y = x >> 3
+```
 
-mulByPowOf2 mulToShift divByPowOf2 divBy1 zeroDiv
-mulOptimization divOptimization 
+==== Funzioni coinvolte
 
+link:LocalOpts.cpp#62[mulByPowOf2]
+
+[source,c++]
+----
+bool mulByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other) 
+----
+
+Dopo aver controllato che l'istruzione sia una moltiplicazione e che uno degli operandi sia, allo stesso tempo, una costante ed una potenza di due, crea un'istruzione di shift a sinistra. Quest'ultima avrà come operandi il registro presente nella moltiplicazione ed il logaritmo in base due della costante. Dopodichè vengono aggiornate le references alla moltiplicazione con lo shift.
+
+link:LocalOpts.cpp#72[mulToShift]
+
+[source,c++]
+----
+bool mulToShift (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
+----
+
+Ha la stessa funzionalità di mulByPowOf2 ma lavora con costanti che non siano potenze di due. Crea due istruzioni: uno shift a sinistra e, un'addizione o una sottrazione. Questa decisione dipende dalla differenza tra il valore contenuto nel registro ed il valore del logaritmo in base due più vicino alla costante. Le references alla moltiplicazione vengono passate all'ultima istruzione creata.
+
+link:LocalOpts.cpp#139[divByPowOf2]
+
+[source,c++]
+----
+bool divByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
+----
+
+Meccanismo identico a mulByPowOf2 ma applicato alla divisione unsigned. In questo caso l'istruzione creata è uno shift a destra.
+
+link:LocalOpts.cpp#149[divBy1]
+
+[source,c++]
+----
+bool divBy1(BinaryOperator *binIter, Value *Other)
+----
+
+Come mulBy1, ma per la divisione unsigned.
+
+link:LocalOpts.cpp#156[zeroDiv]
+
+[source,c++]
+----
+bool zeroDiv(BinaryOperator *binIter, ConstantInt *ci)
+----
+
+In caso di divisione unsigned che abbia 0 come numeratore sostituisce le sue references con la costante 0.
+
+link:LocalOpts.cpp#112[mulOptimization]
+link:LocalOpts.cpp#164[divOptimization]
+
+[source,c++]
+----
+bool mulOptimization(BasicBlock::iterator Iter)
+bool divOptimization (BasicBlock::iterator Iter)
+----
+
+Raggruppano un insieme di controlli effettuati sulle istruzioni ed i loro operandi per snellire il codice relativo alle varie casistiche.
 
 === Multi-Instruction Optimization
 
-`a = b +1, c = a -1, c = b`
+```
+a = b + 1, c = a - 1, c = b
+```
 
-multiInstructionOptimization
+==== Funzioni coinvolte
+
+link:LocalOpts.cpp#195[multiInstructionOptimization]
+
+[source,c++]
+----
+bool multiInstructionOptimization(BasicBlock::iterator Iter, BasicBlock &B)
+----
+
+Nel caso in cui ci sia un'istruzione che svolge un'operazione e, successivamente, un'istruzione che svolge il calcolo inverso, la funzione modifica le references alla seconda sostituendole con l'operando della prima operazione. Questo permette di rimuovere istruzioni non necessarie.  
 
 == link:CMakeLists.txt[]
 
-Inserimento del file sorgente `LocalOpts.cpp` nel CMake.
+Inserimento del file sorgente link:LocalOpts.cpp[] nel CMake.
 
 == link:PassRegistry.def[]
 
 Aggiunta del passo nel pass manager nella sezione relativa ai moduli:
-`MODULE_PASS("local-opts", LocalOpts())`.
+
+[,c++]
+----
+MODULE_PASS("local-opts", LocalOpts())
+----
 
 == link:PassBuilder.cpp[]
 
 Include dell'header file nel pass manager:
-`#include "llvm/Transforms/Utils/LocalOpts.h"`. +
+
+[,c++]
+----
+#include "llvm/Transforms/Utils/LocalOpts.h"
+----
 
 == Esecuzione del codice
 
-Una volta inseriti i file nella propria cartella di lavoro, eseguire i seguenti comandi per l'ottimizzazione +
-ROOT/BUILD -> `make opt && make install` +
-ROOT/TEST -> `opt -p local-opts fileDaOttimizzare.ll -o fileOttimizzato.bc` e +
-`llvm-dis fileOttimizzato.bc -o fileOttimizzato.ll`
+Una volta inseriti i file nella propria cartella di lavoro, eseguire i seguenti comandi per l'ottimizzazione: +
+
+[,bash]
+----
+cd build
+make opt && make install
+cd ..
+cd test
+opt -p local-opts <fileDaOttimizzare>.ll -o <fileOttimizzato>.bc
+llvm-dis <fileOttimizzato>.bc -o <fileOttimizzato>.ll
+----
