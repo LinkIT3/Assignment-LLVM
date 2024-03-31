@@ -22,7 +22,7 @@ Di seguito sono riportati i tre passi LLVM per la realizzazione delle relative o
 :pygments-linenums-mode: table 
 
 
-link:LocalOpts.cpp[lines=24] riga 24
+link:LocalOpts.cpp#24[lines=24] riga 24
 
 [source,c++,linenums]
 
