@@ -1,0 +1,32 @@
+= Secondo Assignment di Linguaggi e Compilatori
+
+== Collegamenti
+
+link:SecondoAssignment.pdf[Traccia]
+
+link:Assignment.pdf[Assignment Svolto]
+
+== Esercizi
+
+=== Very Busy Expressions
+
+Nell'esercizio abbiamo definito quali espressioni fossero very busy; per individuarle è necessario che siano valutate in tutti i percorsi, perciò abbiamo adottato l'intersezione come meet operator. +
+
+Questo esercizio richiede un approccio backward poichè le espressioni vengono valutate partendo da un nodo *p* fino al nodo *EXIT*.
+
+
+=== Dominator Analysis
+
+Lo scopo dell'esercizio è stato quello di valutare se un nodo *n* domina altri nodi e quali dominano *n*. +
+
+La direzione dell'analisi è di tipo forward poichè possiamo identificare i nodi dominanti solo seguendo i percorsi che vanno dal blocco *ENTRY* fino al nodo *n*. +
+
+Siccome il nodo dominante deve apparire in ogni percorso del grafo che porta al nodo *n*, si è scelto di utilizzare l'intersezione come meet operator.
+
+=== Costant Propagation
+
+L’obiettivo dell'esercizio è quello di determinare in quali punti del programma le variabili hanno un valore costante. +
+
+Per ogni nodo si calcola una coppia formata da una variabile e da un valore costante; se successivamente cambia una coppia, questa viene modificata anche nell'insieme delle coppie costanti. Le coppie vengono rimosse dall'insieme tramite il meet operator *__intersezione__*, il quale elimina quelle coppie che non rimangono costanti in tutti i rami. +
+
+Abbiamo utilizzato un controllo di tipo forward in quanto una coppia deve sempre avere lo stesso valore quando l'esecuzione raggiunge il nodo in cui è definita.
