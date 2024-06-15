@@ -42,22 +42,24 @@ bool addBy0(BasicBlock::iterator Iter) {
 }
 
 
-/* Multiplication
+//Subtraction 
 
-a = nearestLog2(value) -> b = pow2(a) -> c = b*X +/- abs(b-value)*X, dove + con b<value e - con b>value
-X<<a + X*abs(b-value)
+bool subBy0(BasicBlock::iterator Iter) {
+  BinaryOperator *binIter = dyn_cast<BinaryOperator>(Iter);
+  if (not binIter) return false;
+  
+  ConstantInt *ci = dyn_cast<ConstantInt>(Iter -> getOperand(1));
+  Value *Other = binIter -> getOperand(0);
 
-X*A
-B = 2^nearest - A
-if (B!=0) // if log2(B)==0 -> x << nearest +/- x
-  if (B>0)
-    x << nearest - x <<log2(B)
-  else if (B<0)
-    X << nearest + X<<log2(|B|)
-X<<nearest
+  if (not ci or not ci -> isZero()) return false;
 
-*/
+  binIter -> replaceAllUsesWith(Other);
 
+  return true;
+}
+
+
+// Multiplication
 
 bool mulByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
 {
@@ -73,32 +75,26 @@ bool mulToShift (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
 {
   unsigned near = ci -> getValue().nearestLogBase2();
   APInt diff = (ci -> getValue()) - (1 << near);
-  unsigned log = diff.logBase2();
+  unsigned log = diff.abs().logBase2();
 
-  Instruction *NewShlInst, *NewShlInst2, *NewInst;
-
-  NewShlInst = BinaryOperator::Create(Instruction::Shl, Other, ConstantInt::get(ci -> getType(), near));
-  NewShlInst -> insertAfter(binIter);
+  Instruction *NewShlInst, *NewInst;
   Instruction::BinaryOps Operation;
 
   if(diff.slt(0))
     Operation = Instruction::Sub;
   else
     Operation = Instruction::Add;
-
+  
   if (log == 0) {
+    NewShlInst = BinaryOperator::Create(Instruction::Shl, Other, ConstantInt::get(ci -> getType(), near));
+    NewShlInst -> insertAfter(binIter);
     NewInst = BinaryOperator::Create(Operation, NewShlInst, Other);
     NewInst -> insertAfter(NewShlInst);
     binIter -> replaceAllUsesWith(NewInst);
-
     return true; 
   }
-  
-  NewShlInst2 = BinaryOperator::Create(Instruction::Shl, Other, ConstantInt::get(ci -> getType(), abs(log)));
-  NewShlInst -> insertAfter(NewShlInst);
-  NewInst = BinaryOperator::Create(Operation, NewShlInst, NewShlInst2);
-  binIter -> replaceAllUsesWith(NewInst);
-  return true;
+
+  return false;
 }
 
 
@@ -240,11 +236,19 @@ bool runOnBasicBlock(BasicBlock &B)
   bool modified = false;
 
   for (BasicBlock::iterator Iter = B.begin(); Iter != B.end(); ++Iter) {
-    multiInstructionOptimization(Iter,B);
+    if (multiInstructionOptimization(Iter,B)) modified = true;
     switch (Iter -> getOpcode()) {
 
       case (Instruction::Add):
         if (addBy0(Iter)) {
+          modified = true;
+          continue;
+        } 
+
+        break;
+      
+      case (Instruction::Sub):
+        if (subBy0(Iter)) {
           modified = true;
           continue;
         } 
