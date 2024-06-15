@@ -37,7 +37,7 @@ Verifica che l'istruzione sia un'addizione e che uno degli operandi sia una cost
 bool subBy0 (BasicBlock::iterator Iter) 
 ----
 
-Verifica che l'istruzione sia una sottrazione e il secondo operando sia una costante, più precisamente che sia uno 0, dopodichè sostituisce le references alla sottrazione con l'operando stesso.
+Verifica che l'istruzione sia una sottrazione e che il secondo operando sia una costante, più precisamente che sia uno 0, dopodichè sostituisce le references alla sottrazione con l'operando stesso.
 
 * link:LocalOpts.cpp#L101[mulBy1]
 
@@ -102,7 +102,7 @@ bool zeroDiv (BinaryOperator *binIter, ConstantInt *ci)
 
 In caso di divisione unsigned che abbia 0 come numeratore sostituisce le sue references con la costante 0.
 
-* link:LocalOpts.cpp#L108[mulOptimization] e link:LocalOpts.cpp#L164[divOptimization]
+* link:LocalOpts.cpp#L108[mulOptimization] e link:LocalOpts.cpp#L160[divOptimization]
 
 [source,c++]
 ----
