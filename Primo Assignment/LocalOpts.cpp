@@ -9,7 +9,6 @@
 #include "llvm/Transforms/Utils/LocalOpts.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/InstrTypes.h"
-#include <map>
 
 using namespace llvm;
 
@@ -96,6 +95,13 @@ bool mulBy1 (BinaryOperator *binIter, Value *Other) {
 }
 
 
+bool zeroMul (BinaryOperator *binIter, ConstantInt *ci) {
+   unsigned zero = 0;
+   binIter -> replaceAllUsesWith(ConstantInt::get(ci -> getType(), zero));
+   return true;
+}
+
+
 bool mulOptimization (BasicBlock::iterator Iter) {
    BinaryOperator *binIter = dyn_cast<BinaryOperator>(Iter);
    if (not binIter) return false;
@@ -110,6 +116,8 @@ bool mulOptimization (BasicBlock::iterator Iter) {
       
       Other = binIter -> getOperand(0);    
    }
+
+   if (ci -> isZero())  return zeroMul(binIter, ci);
 
    if (not ci -> isOne()) {
       if (not ci -> getValue().isPowerOf2()) return mulToShift(binIter, ci, Other);
@@ -208,7 +216,6 @@ bool multiInstructionOptimization(BasicBlock::iterator Iter, BasicBlock &B)
 
    BinaryOperator *binIter2;
    ConstantInt *ci2;
-   Value *Other2;
 
    bool modified = false;
 
@@ -219,7 +226,6 @@ bool multiInstructionOptimization(BasicBlock::iterator Iter, BasicBlock &B)
          if (not binIter2) continue;
 
          ci2 = dyn_cast<ConstantInt>(binIter2 -> getOperand(1));
-         Other2 = binIter2 -> getOperand(0);
 
          if (not ci2 or ci != ci2) continue;
          

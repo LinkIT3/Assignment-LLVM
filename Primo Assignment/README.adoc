@@ -21,7 +21,7 @@ x * 1 = 1 * x ⇒ x
 
 ==== Funzioni coinvolte
 
-* link:LocalOpts.cpp#L18[addBy0]
+* link:LocalOpts.cpp#L17[addBy0]
 
 [source,c++]
 ----
@@ -30,7 +30,7 @@ bool addBy0 (BasicBlock::iterator Iter)
 
 Verifica che l'istruzione sia un'addizione e che uno degli operandi sia una costante, più precisamente che sia uno 0, dopodichè sostituisce le references all'addizione con l'operando stesso.
 
-* link:LocalOpts.cpp#L41[subBy0]
+* link:LocalOpts.cpp#L40[subBy0]
 
 [source,c++]
 ----
@@ -39,7 +39,7 @@ bool subBy0 (BasicBlock::iterator Iter)
 
 Verifica che l'istruzione sia una sottrazione e che il secondo operando sia una costante, più precisamente che sia uno 0, dopodichè sostituisce le references alla sottrazione con l'operando stesso.
 
-* link:LocalOpts.cpp#L93[mulBy1]
+* link:LocalOpts.cpp#L92[mulBy1]
 
 [source,c++]
 ----
@@ -57,7 +57,7 @@ y = x / 8 ⇒ y = x >> 3
 
 ==== Funzioni coinvolte
 
-* link:LocalOpts.cpp#L58[mulByPowOf2]
+* link:LocalOpts.cpp#L57[mulByPowOf2]
 
 [source,c++]
 ----
@@ -66,7 +66,7 @@ bool mulByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
 
 Dopo aver controllato che l'istruzione sia una moltiplicazione e che uno degli operandi sia, allo stesso tempo, una costante ed una potenza di due, crea un'istruzione di shift a sinistra. Quest'ultima avrà come operandi il registro presente nella moltiplicazione ed il logaritmo in base due della costante. Dopodichè vengono aggiornate le references alla moltiplicazione con lo shift.
 
-* link:LocalOpts.cpp#L67[mulToShift]
+* link:LocalOpts.cpp#L66[mulToShift]
 
 [source,c++]
 ----
@@ -75,7 +75,16 @@ bool mulToShift (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
 
 Ha la stessa funzionalità di mulByPowOf2 ma lavora con costanti che non siano potenze di due. Crea due istruzioni: uno shift a sinistra e, un'addizione o una sottrazione. Questa decisione dipende dalla differenza tra il valore contenuto nel registro ed il valore del logaritmo in base due più vicino alla costante. Le references alla moltiplicazione vengono passate all'ultima istruzione creata.
 
-* link:LocalOpts.cpp#L125[divByPowOf2]
+* link:LocalOpts.cpp#L98[zeroMul]
+
+[source,c++]
+----
+bool zeroMul (BinaryOperator *binIter, ConstantInt *ci)
+----
+
+In presenza di uno 0, sostituisce le references con la costante 0.
+
+* link:LocalOpts.cpp#L133[divByPowOf2]
 
 [source,c++]
 ----
@@ -84,7 +93,7 @@ bool divByPowOf2 (BinaryOperator *binIter, ConstantInt *ci, Value *Other)
 
 Meccanismo identico a mulByPowOf2 ma applicato alla divisione unsigned. In questo caso l'istruzione creata è uno shift a destra.
 
-* link:LocalOpts.cpp#L134[divBy1]
+* link:LocalOpts.cpp#L142[divBy1]
 
 [source,c++]
 ----
@@ -93,7 +102,7 @@ bool divBy1 (BinaryOperator *binIter, Value *Other)
 
 Come mulBy1, ma per la divisione unsigned.
 
-* link:LocalOpts.cpp#L140[zeroDiv]
+* link:LocalOpts.cpp#L148[zeroDiv]
 
 [source,c++]
 ----
@@ -102,7 +111,7 @@ bool zeroDiv (BinaryOperator *binIter, ConstantInt *ci)
 
 In caso di divisione unsigned che abbia 0 come numeratore sostituisce le sue references con la costante 0.
 
-* link:LocalOpts.cpp#L99[mulOptimization] e link:LocalOpts.cpp#L147[divOptimization]
+* link:LocalOpts.cpp#L105[mulOptimization] e link:LocalOpts.cpp#L155[divOptimization]
 
 [source,c++]
 ----
@@ -124,7 +133,7 @@ a = b + 1, c = a - 1, c = b
 
 ==== Funzioni coinvolte
 
-* link:LocalOpts.cpp#L198[multiInstructionOptimization]
+* link:LocalOpts.cpp#L206[multiInstructionOptimization]
 
 [source,c++]
 ----
