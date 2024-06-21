@@ -27,7 +27,7 @@ link:MyLoopFusion.cpp#L66-L123[Fusione]
 
 == link:CMakeLists.txt[]
 
-Inserimento del file sorgente link:LocalOpts.cpp[] nel CMake.
+Inserimento del file sorgente link:MyLoopFusion.cpp[] nel CMake.
 
 == link:PassRegistry.def[]
 
