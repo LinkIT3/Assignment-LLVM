@@ -35,7 +35,7 @@ link:LoopICM.cpp#L92-L100[Funzione di spostamento]
 
 == link:CMakeLists.txt[]
 
-Inserimento del file sorgente link:LocalOpts.cpp[] nel CMake.
+Inserimento del file sorgente link:LoopICM.cpp[] nel CMake.
 
 == link:PassRegistry.def[]
 

@@ -17,13 +17,13 @@ L'esito risulta positivo se vengono soddisfatte le seguenti condizioni: +
 - i due loop sono control flow equivalenti
 - i due loop non contengono dipendenze negative
 
-link:LoopICM.cpp#L5-L64[Funzioni per il controllo]
+link:MyLoopFusion.cpp#L5-L64[Funzioni per il controllo]
 
 === Fusione dei due loop
 
 I due loop vengono fusi in un unico loop.
 
-link:LoopICM.cpp#L66-L123[Fusione]
+link:MyLoopFusion.cpp#L66-L123[Fusione]
 
 == link:CMakeLists.txt[]
 
