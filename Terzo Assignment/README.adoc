@@ -32,3 +32,42 @@ link:LoopICM.cpp#L57-L71[Funzioni code motion]
 Dopo aver determinato quali istruzioni rispettano le condizioni per la loop invariant code motion, si procede allo spostamento delle stesse (nell'ordine in cui sono state individuate) nel preheader; infine, si eliminano le istruzioni prive di *users*.
 
 link:LoopICM.cpp#L92-L100[Funzione di spostamento]
+
+== link:CMakeLists.txt[]
+
+Inserimento del file sorgente link:LocalOpts.cpp[] nel CMake.
+
+== link:PassRegistry.def[]
+
+Aggiunta del passo nel pass manager nella sezione relativa ai loop:
+
+[,c++]
+----
+LOOP_PASS("loop-icm", LoopICM())
+----
+
+== link:PassBuilder.cpp[]
+
+Include dell'header file nel pass manager:
+
+[,c++]
+----
+#include "llvm/Transforms/Utils/LoopICM.h"
+----
+
+== Esecuzione del codice
+
+Una volta inseriti i file nella propria cartella di lavoro, eseguire i seguenti comandi per l'ottimizzazione: +
+
+[,bash]
+----
+cd build
+make opt && make install
+cd ..
+cd test
+clang -O0 -emit-llvm -S -c -Xclang -disable-O0-optnone <fileSorgente>.c -o <fileDaOttimizzare>.ll
+opt -p mem2reg <fileDaOttimizzare>.ll -o <fileIntermedio>.bc
+llvm-dis <fileIntermedio>.bc -o <fileIntermedio>.ll
+opt -p loop-icm <fileIntermedio>.ll -o <fileOttimizzato>.bc
+llvm-dis <fileOttimizzato>.bc -o <fileOttimizzato>.ll
+----

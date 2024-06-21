@@ -1,34 +1,71 @@
 = Quarto Assignment di Linguaggi e Compilatori
 
-link:TerzoAssignment.pdf[Traccia]
+link:QuartoAssignment.pdf[Traccia]
 
-Lo scopo dell'assignment è stato quello di realizzare il passo di *LICM* (_Loop Invariant Code Motion_). +
+Lo scopo dell'assignment è stato quello di realizzare il passo di *LoopFusion*. +
 
 == Algoritmo
 
-L'algoritmo del passo è suddiviso in tre fasi:
+L'algoritmo del passo è suddiviso in due fasi:
 
-=== Individuazione delle istruzioni loop invariant
+=== Controllo sulla possibilità di fusione di due loop
 
-Per prima cosa si tiene traccia delle istruzioni *loop invariant*, ovvero quelle istruzioni che hanno sempre lo stesso valore ad ogni ciclo, e delle istruzioni che non vengono utilizzate da nessun *user*. +
+L'esito risulta positivo se vengono soddisfatte le seguenti condizioni: +
 
-Per determinare se un'istruzione è loop invariant bisogna verificare che ogni suo operando soddisfi almeno una delle seguenti condizioni: +
+- i due loop sono adiacenti
+- i due loop ierano lo stesso numero di volte
+- i due loop sono control flow equivalenti
+- i due loop non contengono dipendenze negative
 
-- è una costante
-- è definito fuori dal loop
-- è presente nell'insieme dei loop invariant
+link:LoopICM.cpp#L5-L64[Funzioni per il controllo]
 
-link:LoopICM.cpp#L35-L55[Funzioni loop invariant]
+=== Fusione dei due loop
 
-=== Verifica delle condizioni per la code motion
+I due loop vengono fusi in un unico loop.
 
-Non tutte le istruzioni loop invariant possono essere spostate nel
-preheader. Infatti, una volta recuperati l'albero di dominanza e i blocchi successori del loop, si salvano le istruzioni loop invariant sulle quali è possibile applicare la code motion. Queste istruzioni si trovano in blocchi che dominano tutte le uscite del loop oppure le variabili da loro definite sono *dead* all'uscita del loop.
+link:LoopICM.cpp#L66-L123[Fusione]
 
-link:LoopICM.cpp#L57-L71[Funzioni code motion]
+== link:CMakeLists.txt[]
 
-=== Spostamento delle istruzioni
+Inserimento del file sorgente link:LocalOpts.cpp[] nel CMake.
 
-Dopo aver determinato quali istruzioni rispettano le condizioni per la loop invariant code motion, si procede allo spostamento delle stesse (nell'ordine in cui sono state individuate) nel preheader; infine, si eliminano le istruzioni senza *users*.
+== link:PassRegistry.def[]
 
-link:LoopICM.cpp#L92-L100[Funzione di spostamento]
+Aggiunta del passo nel pass manager nella sezione relativa alle funzioni:
+
+[,c++]
+----
+FUNCTION_PASS("my-loop-fusion", MyLoopFusionPass())
+----
+
+== link:PassBuilder.cpp[]
+
+Include dell'header file nel pass manager:
+
+[,c++]
+----
+#include "llvm/Transforms/Utils/MyLoopFusion.h"
+----
+
+== Esecuzione del codice
+
+Una volta inseriti i file nella propria cartella di lavoro, eseguire i seguenti comandi per l'ottimizzazione: +
+
+[,bash]
+----
+cd build
+make opt && make install
+cd ..
+cd test
+clang -O0 -emit-llvm -S -c -Xclang -disable-O0-optnone <fileSorgente>.c -o <fileDaOttimizzare>.ll
+opt -p mem2reg <fileDaOttimizzare>.ll -o <fileIntermedio>.bc
+llvm-dis <fileIntermedio>.bc -o <fileIntermedio>.ll
+opt -p my-loop-fusion <fileIntermedio>.ll -o <fileOttimizzato>.bc
+llvm-dis <fileOttimizzato>.bc -o <fileOttimizzato>.ll
+----
+
+== Visualizzazione dei Control Flow Graph
+----
+opt -p dot-cfg <file>.ll
+dot -Tpng .<nome_funzione>.dot -o <nome_funzione>.png
+----
