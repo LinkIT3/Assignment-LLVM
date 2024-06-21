@@ -209,11 +209,17 @@ bool multiInstructionOptimization(BasicBlock::iterator Iter, BasicBlock &B)
    if (not binIter) return false;
 
    ConstantInt *ci = dyn_cast<ConstantInt>(binIter -> getOperand(1));
-
-   if (not ci) return false;
-
    Value *Other = binIter -> getOperand(0);
 
+   if (not ci) {
+      if (binIter->getOpcode() == Instruction::Add or binIter->getOpcode() == Instruction::Mul) {
+         ci = dyn_cast<ConstantInt>(binIter -> getOperand(0));
+         if (not ci) return false;
+         Other = binIter -> getOperand(1);
+      }
+      else  return false;
+   }
+   
    BinaryOperator *binIter2;
    ConstantInt *ci2;
 
@@ -227,7 +233,15 @@ bool multiInstructionOptimization(BasicBlock::iterator Iter, BasicBlock &B)
 
          ci2 = dyn_cast<ConstantInt>(binIter2 -> getOperand(1));
 
-         if (not ci2 or ci != ci2) continue;
+         if (not ci2) {
+            if (binIter2->getOpcode() == Instruction::Add or binIter2->getOpcode() == Instruction::Mul) {
+               ci2 = dyn_cast<ConstantInt>(binIter2 -> getOperand(0));
+               if (not ci2) continue;
+            }
+            else  continue;
+         }
+
+         if (ci != ci2) continue;
          
          User -> replaceAllUsesWith(Other);
 
