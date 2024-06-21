@@ -65,6 +65,7 @@ llvm-dis <fileOttimizzato>.bc -o <fileOttimizzato>.ll
 ----
 
 == Visualizzazione dei Control Flow Graph
+Per ottenere i file png bisogna scaricare il software link:https://graphviz.org/[Graphviz]
 ----
 opt -p dot-cfg <file>.ll
 dot -Tpng .<nome_funzione>.dot -o <nome_funzione>.png
