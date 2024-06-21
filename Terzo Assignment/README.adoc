@@ -29,6 +29,6 @@ link:LoopICM.cpp#L57-L71[Funzioni code motion]
 
 === Spostamento delle istruzioni
 
-Dopo aver determinato quali istruzioni rispettano le condizioni per la loop invariant code motion, si procede allo spostamento delle stesse (nell'ordine in cui sono state individuate) nel preheader; infine, si eliminano le istruzioni senza *users*.
+Dopo aver determinato quali istruzioni rispettano le condizioni per la loop invariant code motion, si procede allo spostamento delle stesse (nell'ordine in cui sono state individuate) nel preheader; infine, si eliminano le istruzioni prive di *users*.
 
 link:LoopICM.cpp#L92-L100[Funzione di spostamento]
