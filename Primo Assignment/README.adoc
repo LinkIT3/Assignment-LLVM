@@ -140,7 +140,7 @@ a = b + 1, c = a - 1, c = b
 bool multiInstructionOptimization (BasicBlock::iterator Iter, BasicBlock &B)
 ----
 
-Nel caso in cui ci sia un'istruzione che svolge un'operazione e, successivamente, un'istruzione che svolge il calcolo inverso, la funzione modifica le references alla seconda sostituendole con l'operando della prima operazione. Questo permette di rimuovere istruzioni non necessarie.  
+Nel caso in cui ci sia un'istruzione che svolge un'operazione e, successivamente, un'istruzione che svolge il calcolo inverso, la funzione modifica le references alla seconda sostituendole con l'operando della prima operazione. Questo permette di rimuovere le istruzioni non necessarie.  
 
 == link:CMakeLists.txt[]
 
