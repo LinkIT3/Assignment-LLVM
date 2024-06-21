@@ -1,0 +1,34 @@
+= Quarto Assignment di Linguaggi e Compilatori
+
+link:TerzoAssignment.pdf[Traccia]
+
+Lo scopo dell'assignment è stato quello di realizzare il passo di *LICM* (_Loop Invariant Code Motion_). +
+
+== Algoritmo
+
+L'algoritmo del passo è suddiviso in tre fasi:
+
+=== Individuazione delle istruzioni loop invariant
+
+Per prima cosa si tiene traccia delle istruzioni *loop invariant*, ovvero quelle istruzioni che hanno sempre lo stesso valore ad ogni ciclo, e delle istruzioni che non vengono utilizzate da nessun *user*. +
+
+Per determinare se un'istruzione è loop invariant bisogna verificare che ogni suo operando soddisfi almeno una delle seguenti condizioni: +
+
+- è una costante
+- è definito fuori dal loop
+- è presente nell'insieme dei loop invariant
+
+link:LoopICM.cpp#L35-L55[Funzioni loop invariant]
+
+=== Verifica delle condizioni per la code motion
+
+Non tutte le istruzioni loop invariant possono essere spostate nel
+preheader. Infatti, una volta recuperati l'albero di dominanza e i blocchi successori del loop, si salvano le istruzioni loop invariant sulle quali è possibile applicare la code motion. Queste istruzioni si trovano in blocchi che dominano tutte le uscite del loop oppure le variabili da loro definite sono *dead* all'uscita del loop.
+
+link:LoopICM.cpp#L57-L71[Funzioni code motion]
+
+=== Spostamento delle istruzioni
+
+Dopo aver determinato quali istruzioni rispettano le condizioni per la loop invariant code motion, si procede allo spostamento delle stesse (nell'ordine in cui sono state individuate) nel preheader; infine, si eliminano le istruzioni senza *users*.
+
+link:LoopICM.cpp#L92-L100[Funzione di spostamento]
