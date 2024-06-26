@@ -73,7 +73,7 @@ void loopFusion(Loop *l0, Loop *l1) {
    BasicBlock *latch0 = l0->getLoopLatch();
    BasicBlock *latch1 = l1->getLoopLatch();
    BasicBlock *exit = l1->getUniqueExitBlock();
-
+   
    if (!l0->isGuarded()) {
       // Modify CFG as follows:
       // header 0 --> L1 exit
@@ -102,9 +102,11 @@ void loopFusion(Loop *l0, Loop *l1) {
       // header1 --> latch0
 
       BasicBlock *guard0 = l0->getLoopGuardBranch()->getParent();
+      BasicBlock *guard1 = l1->getLoopGuardBranch()->getParent();
+      BasicBlock *preheader1 = l1->getLoopPreheader();
 
       // Attach guard 0 to L1 exit
-      BranchInst::Create(l0->getLoopPreheader(), exit, guard0->back().getOperand(0), guard0->getTerminator());
+      BranchInst::Create(l0->getLoopPreheader(), exit->getSingleSuccessor(), guard0->back().getOperand(0), guard0->getTerminator());
       guard0->getTerminator()->eraseFromParent();
 
       // Attach latch 0 to L1 exit
@@ -119,6 +121,18 @@ void loopFusion(Loop *l0, Loop *l1) {
 
       // Remove header 1 PHI node
       header1->front().eraseFromParent();
+
+      // Attach preheader 1 to latch 1
+      BranchInst::Create(latch1, preheader1->getTerminator());
+      preheader1->getTerminator()->eraseFromParent();
+
+      // Attach latch 1 to guard 1
+      BranchInst::Create(guard1, latch1->getTerminator());
+      latch1->getTerminator()->eraseFromParent();
+
+      // Attachh guard 1 to preheader 1
+      BranchInst::Create(preheader1, guard1->getTerminator());
+      guard1->getTerminator()->eraseFromParent();
    }
 }
 
